@@ -3,7 +3,104 @@
 [![HACS Custom](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://hacs.xyz)
 [![Version](https://img.shields.io/github/v/release/weskona/tariffy-card)](https://github.com/weskona/tariffy-card/releases)
 
-Lovelace Card für die [Tariffy Integration](https://github.com/weskona/tariffy). Zeigt Verträge kompakt oder detailliert an — sparten-abhängig mit allen relevanten Sensoren.
+Lovelace Card for the [Tariffy Integration](https://github.com/weskona/tariffy). Displays contracts in compact or detail mode — category-specific with all relevant sensors.
+
+**[🇩🇪 Deutsche Version weiter unten](#-deutsch)**
+
+---
+
+## 🇬🇧 English
+
+### Features
+
+- **Two modes:** Compact (tile) and detail — toggle by clicking the card
+- **Category-specific layouts:** Electricity, Gas, Water, Internet, Mobile, Insurance, Other
+- **Electricity:** unit price, base price, night rate, tiered effective price, feed-in tariff, estimated annual cost, real billing forecast
+- **Gas:** m³, kWh, calorific value, state number, consumption since contract start
+- **Water:** fresh water price, wastewater, combined price, base price, consumption since contract start
+- **Real consumption tracking:** consumption so far + projected annual consumption (requires meter sensor in Tariffy)
+- **Real billing forecast:** credit or surcharge based on actual usage
+- **Cancellation warning** highlighted as badge
+- **Tariff switch** shown when stored
+- Automatic category detection via `device_id`
+
+### Installation via HACS
+
+1. HACS → Frontend → ⋮ → **Custom repositories**
+2. URL: `https://github.com/weskona/tariffy-card` – Category: **Lovelace**
+3. Install Tariffy Card
+4. Reload page
+
+### Manual installation
+
+Copy `tariffy-card.js` to `/config/www/` and register as resource:
+
+```yaml
+lovelace:
+  resources:
+    - url: /local/tariffy-card.js
+      type: module
+```
+
+### Configuration
+
+#### Option A – automatic via `device_id` (recommended)
+
+```yaml
+type: custom:tariffy-card
+device_id: abc123def456
+mode: compact  # compact (default) or detail
+```
+
+#### Option B – manual via `entities`
+
+```yaml
+type: custom:tariffy-card
+name: Electricity House
+sparte: strom
+entities:
+  anbieter: sensor.electricity_provider
+  tarif: sensor.electricity_tariff
+  monatliche_kosten: sensor.electricity_monthly_cost
+  jahreskosten: sensor.electricity_annual_cost
+  geschaetzte_jahreskosten: sensor.electricity_estimated_annual_cost
+  arbeitspreis: sensor.electricity_unit_price
+  grundpreis: sensor.electricity_base_price
+  einspeiseverguetung: sensor.electricity_feed_in_tariff
+  verbrauch_bisher: sensor.electricity_consumption_so_far
+  verbrauch_hochgerechnet: sensor.electricity_projected_annual
+  prognose_real: sensor.electricity_billing_forecast
+  restlaufzeit: sensor.electricity_remaining_term
+  beginn: sensor.electricity_contract_start
+  ende: sensor.electricity_contract_end
+  kuendigung_erinnerung: sensor.electricity_cancellation_reminder
+  naechster_wechsel: sensor.electricity_next_switch
+  kundennummer: sensor.electricity_customer_number
+  zaehlernummer: sensor.electricity_meter_number
+```
+
+### Options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `device_id` | string | – | Tariffy device ID (recommended) |
+| `entities` | object | – | Manual entity mapping |
+| `name` | string | device name | Display name |
+| `sparte` | string | auto | `strom`, `gas`, `wasser`, `internet`, `mobilfunk`, `versicherung`, `sonstiges` |
+| `mode` | string | `compact` | Start mode: `compact` or `detail` |
+
+### Modes
+
+**Compact** — one row: icon, name, provider, monthly cost, remaining days. Cancellation warning as badge.
+
+**Detail** — full view with cost tiles (monthly, annual, billing forecast), price grid (category-specific), real consumption, contract dates, customer/meter number.
+
+Click the card to toggle between modes.
+
+### Requirements
+
+- [Tariffy Integration](https://github.com/weskona/tariffy) v1.9.4+
+- Home Assistant 2026.6+
 
 ---
 
@@ -12,10 +109,13 @@ Lovelace Card für die [Tariffy Integration](https://github.com/weskona/tariffy)
 ### Features
 
 - **Zwei Modi:** Kompakt (Kachel) und Detail — per Klick umschaltbar
-- **Sparten-abhängig:** Strom, Gas, Wasser, Internet, Mobilfunk, Versicherung, Sonstiges
-- **Gas:** zeigt m³, kWh, Brennwert und Zustandszahl
-- **Energie:** zeigt Arbeitspreis, Grundpreis, geschätzte Jahreskosten, Abrechnungsprognose
-- **Kündigungs-Warnung** wird farblich hervorgehoben
+- **Sparten-spezifische Layouts:** Strom, Gas, Wasser, Internet, Mobilfunk, Versicherung, Sonstiges
+- **Strom:** Arbeitspreis, Grundpreis, Nachttarif, effektiver Staffelpreis, Einspeisevergütung, geschätzte Jahreskosten, Abrechnungsprognose (real)
+- **Gas:** m³, kWh, Brennwert, Zustandszahl, Verbrauch seit Vertragsbeginn
+- **Wasser:** Frischwasserpreis, Abwasser, Gesamtpreis, Grundpreis, Verbrauch seit Vertragsbeginn
+- **Echte Verbrauchsmessung:** Verbrauch bisher + hochgerechneter Jahresverbrauch (erfordert Verbrauchssensor in Tariffy)
+- **Abrechnungsprognose (real):** Guthaben oder Nachzahlung auf Basis des echten Verbrauchs
+- **Kündigungs-Warnung** als Badge hervorgehoben
 - **Tarifwechsel** wird angezeigt wenn hinterlegt
 - Automatische Sparten-Erkennung per `device_id`
 
@@ -31,7 +131,6 @@ Lovelace Card für die [Tariffy Integration](https://github.com/weskona/tariffy)
 `tariffy-card.js` in `/config/www/` kopieren und als Ressource registrieren:
 
 ```yaml
-# configuration.yaml
 lovelace:
   resources:
     - url: /local/tariffy-card.js
@@ -40,9 +139,7 @@ lovelace:
 
 ### Konfiguration
 
-#### Variante A – automatisch per `device_id`
-
-Die einfachste Methode: `device_id` aus den Entwicklertools kopieren.
+#### Variante A – automatisch per `device_id` (empfohlen)
 
 ```yaml
 type: custom:tariffy-card
@@ -57,20 +154,24 @@ type: custom:tariffy-card
 name: Strom Haus
 sparte: strom
 entities:
-  anbieter: sensor.strom_haus_anbieter
-  tarif: sensor.strom_haus_tarif
-  monatliche_kosten: sensor.strom_haus_monatliche_kosten
-  jahreskosten: sensor.strom_haus_jahreskosten_abschlag
-  geschaetzte_jahreskosten: sensor.strom_haus_geschatzte_jahreskosten
-  arbeitspreis: sensor.strom_haus_arbeitspreis
-  grundpreis: sensor.strom_haus_grundpreis
-  prognose: sensor.strom_haus_abrechnungsprognose
-  restlaufzeit: sensor.strom_haus_restlaufzeit
-  ende: sensor.strom_haus_vertragsende
-  kuendigung_erinnerung: sensor.strom_haus_kundigungs_erinnerung
-  naechster_wechsel: sensor.strom_haus_nachster_wechsel
-  kundennummer: sensor.strom_haus_kundennummer
-  zaehlernummer: sensor.strom_haus_zahlernummer
+  anbieter: sensor.strom_anbieter
+  tarif: sensor.strom_tarif
+  monatliche_kosten: sensor.strom_monatliche_kosten
+  jahreskosten: sensor.strom_jahreskosten
+  geschaetzte_jahreskosten: sensor.strom_geschaetzte_jahreskosten
+  arbeitspreis: sensor.strom_arbeitspreis
+  grundpreis: sensor.strom_grundpreis
+  einspeiseverguetung: sensor.strom_einspeiseverguetung
+  verbrauch_bisher: sensor.strom_verbrauch_bisher_vertrag
+  verbrauch_hochgerechnet: sensor.strom_hochgerechneter_jahresverbrauch
+  prognose_real: sensor.strom_abrechnungsprognose_real
+  restlaufzeit: sensor.strom_restlaufzeit
+  beginn: sensor.strom_vertragsbeginn
+  ende: sensor.strom_vertragsende
+  kuendigung_erinnerung: sensor.strom_kuendigungs_erinnerung
+  naechster_wechsel: sensor.strom_naechster_wechsel
+  kundennummer: sensor.strom_kundennummer
+  zaehlernummer: sensor.strom_zaehlernummer
 ```
 
 ### Optionen
@@ -85,54 +186,16 @@ entities:
 
 ### Modi
 
-**Kompakt** — eine Zeile mit Icon, Name, Anbieter, Kosten und Restlaufzeit. Kündigungswarnung als Badge.
+**Kompakt** — eine Zeile: Icon, Name, Anbieter, Monatskosten, Restlaufzeit. Kündigungswarnung als Badge.
 
-**Detail** — vollständige Ansicht mit Kosten-Kacheln, Preisen, Verbrauch (Gas: m³ + kWh + Brennwert), Restlaufzeit, Kundennummer und Zählernummer.
+**Detail** — vollständige Ansicht mit Kosten-Kacheln (monatlich, jährlich, Prognose), Preis-Grid (sparten-spezifisch), echtem Verbrauch, Vertragsdaten, Kundennummer und Zählernummer.
 
 Per Klick auf die Card zwischen den Modi wechseln.
 
----
+### Anforderungen
 
-## 🇬🇧 English
-
-### Features
-
-- **Two modes:** Compact (tile) and detail — toggle by clicking
-- **Category-dependent:** Electricity, Gas, Water, Internet, Mobile, Insurance, Other
-- **Gas:** shows m³, kWh, calorific value and state number
-- **Energy:** shows unit price, base price, estimated annual costs, billing forecast
-- **Cancellation warning** highlighted in color
-- **Tariff switch** displayed when stored
-- Automatic category detection via `device_id`
-
-### Installation via HACS
-
-1. HACS → Frontend → ⋮ → **Custom repositories**
-2. URL: `https://github.com/weskona/tariffy-card` – Category: **Lovelace**
-3. Install Tariffy Card
-4. Reload page
-
-### Configuration
-
-#### Option A – automatic via `device_id`
-
-```yaml
-type: custom:tariffy-card
-device_id: abc123def456
-mode: compact
-```
-
-#### Option B – manual via `entities`
-
-```yaml
-type: custom:tariffy-card
-name: Electricity House
-sparte: strom
-entities:
-  anbieter: sensor.electricity_house_provider
-  monatliche_kosten: sensor.electricity_house_monthly_cost
-  # ... etc
-```
+- [Tariffy Integration](https://github.com/weskona/tariffy) v1.9.4+
+- Home Assistant 2026.6+
 
 ---
 
