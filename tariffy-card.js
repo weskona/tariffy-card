@@ -40,30 +40,31 @@ class TariffyCard extends HTMLElement {
       const id = e.entity_id;
       const s = hass.states[id];
       if (!s) return;
-      const tk = s.attributes.translation_key || '';
-      if      (tk === 'arbeitspreis'              || (id.includes('arbeitspreis') && !id.includes('nacht') && !id.includes('abwasser') && !id.includes('gesamt') && !id.includes('effektiv'))) result.arbeitspreis = id;
-      else if (tk === 'arbeitspreis_nacht'         || id.includes('arbeitspreis_nacht'))          result.arbeitspreis_nacht = id;
-      else if (tk === 'effektiver_arbeitspreis'    || id.includes('effektiver_arbeitspreis'))      result.effektiver_arbeitspreis = id;
-      else if (tk === 'arbeitspreis_abwasser'      || id.includes('arbeitspreis_abwasser'))        result.arbeitspreis_abwasser = id;
-      else if (tk === 'arbeitspreis_gesamt_wasser' || id.includes('arbeitspreis_gesamt_wasser'))   result.arbeitspreis_gesamt_wasser = id;
-      else if (tk === 'grundpreis'                || id.includes('grundpreis'))                    result.grundpreis = id;
-      else if (tk === 'monatliche_kosten'          || id.includes('monatliche_kosten'))            result.monatliche_kosten = id;
-      else if (tk === 'jahreskosten'               || (id.includes('jahreskosten') && !id.includes('geschaetzt'))) result.jahreskosten = id;
-      else if (tk === 'geschaetzte_jahreskosten'   || id.includes('geschaetzt'))                   result.geschaetzte_jahreskosten = id;
-      else if (tk === 'verbrauch_kwh'              || id.includes('verbrauch_kwh'))                result.verbrauch_kwh = id;
-      else if (tk === 'verbrauch_hochgerechnet'    || id.includes('hochgerechnet'))                result.verbrauch_hochgerechnet = id;
-      else if (tk === 'verbrauch_bisher'           || id.includes('verbrauch_bisher'))             result.verbrauch_bisher = id;
-      else if (tk === 'prognose_real'              || id.includes('prognose_real'))                result.prognose_real = id;
-      else if (tk === 'einspeiseverguetung'        || id.includes('einspeiseverguetung'))          result.einspeiseverguetung = id;
-      else if (tk === 'restlaufzeit'               || id.includes('restlaufzeit'))                 result.restlaufzeit = id;
-      else if (tk === 'beginn'                     || id.includes('vertragsbeginn'))               result.beginn = id;
-      else if (tk === 'ende'                       || id.includes('vertragsende') || id.includes('_ende')) result.ende = id;
-      else if (tk === 'anbieter'                   || id.includes('anbieter'))                     result.anbieter = id;
-      else if (tk === 'tarif'                      || id.includes('_tarif'))                       result.tarif = id;
-      else if (tk === 'kundennummer'               || id.includes('kundennummer'))                 result.kundennummer = id;
-      else if (tk === 'zaehlernummer'              || id.includes('zaehlernummer'))                result.zaehlernummer = id;
-      else if (tk === 'naechster_wechsel'          || id.includes('wechsel'))                      result.naechster_wechsel = id;
-      else if (tk === 'kuendigung_erinnerung'      || id.includes('kuendigung'))                   result.kuendigung_erinnerung = id;
+      // translation_key is in the entity registry entry (e), not in state.attributes
+      const tk = e.translation_key || '';
+      if      (tk === 'arbeitspreis'              || (!tk && id.includes('arbeitspreis') && !id.includes('nacht') && !id.includes('abwasser') && !id.includes('gesamt') && !id.includes('effektiv'))) result.arbeitspreis = id;
+      else if (tk === 'arbeitspreis_nacht'         || (!tk && id.includes('arbeitspreis_nacht')))          result.arbeitspreis_nacht = id;
+      else if (tk === 'effektiver_arbeitspreis'    || (!tk && id.includes('effektiver_arbeitspreis')))      result.effektiver_arbeitspreis = id;
+      else if (tk === 'arbeitspreis_abwasser'      || (!tk && (id.includes('arbeitspreis_abwasser') || id.includes('abwasserpreis')))) result.arbeitspreis_abwasser = id;
+      else if (tk === 'arbeitspreis_gesamt_wasser' || (!tk && (id.includes('arbeitspreis_gesamt_wasser') || id.includes('gesamtwasserpreis')))) result.arbeitspreis_gesamt_wasser = id;
+      else if (tk === 'grundpreis'                || (!tk && id.includes('grundpreis')))                    result.grundpreis = id;
+      else if (tk === 'monatliche_kosten'          || (!tk && id.includes('monatliche_kosten')))            result.monatliche_kosten = id;
+      else if (tk === 'jahreskosten'               || (!tk && id.includes('jahreskosten') && !id.includes('geschatzt'))) result.jahreskosten = id;
+      else if (tk === 'geschaetzte_jahreskosten'   || (!tk && id.includes('geschatzt')))                   result.geschaetzte_jahreskosten = id;
+      else if (tk === 'verbrauch_kwh'              || (!tk && id.includes('verbrauch_kwh')))                result.verbrauch_kwh = id;
+      else if (tk === 'verbrauch_hochgerechnet'    || (!tk && id.includes('hochgerechnet')))                result.verbrauch_hochgerechnet = id;
+      else if (tk === 'verbrauch_bisher'           || (!tk && id.includes('verbrauch_bisher')))             result.verbrauch_bisher = id;
+      else if (tk === 'prognose_real'              || (!tk && id.includes('prognose_real')))                result.prognose_real = id;
+      else if (tk === 'einspeiseverguetung'        || (!tk && id.includes('einspeiseverguetung')))          result.einspeiseverguetung = id;
+      else if (tk === 'restlaufzeit'               || (!tk && id.includes('restlaufzeit')))                 result.restlaufzeit = id;
+      else if (tk === 'beginn'                     || (!tk && id.includes('vertragsbeginn')))               result.beginn = id;
+      else if (tk === 'ende'                       || (!tk && (id.includes('vertragsende') || id.includes('_ende')))) result.ende = id;
+      else if (tk === 'anbieter'                   || (!tk && id.includes('anbieter')))                     result.anbieter = id;
+      else if (tk === 'tarif'                      || (!tk && id.includes('_tarif')))                       result.tarif = id;
+      else if (tk === 'kundennummer'               || (!tk && id.includes('kundennummer')))                 result.kundennummer = id;
+      else if (tk === 'zaehlernummer'              || (!tk && (id.includes('zaehlernummer') || id.includes('zahlernummer')))) result.zaehlernummer = id;
+      else if (tk === 'naechster_wechsel'          || (!tk && id.includes('wechsel')))                      result.naechster_wechsel = id;
+      else if (tk === 'kuendigung_erinnerung'      || (!tk && id.includes('kuendigung')))                   result.kuendigung_erinnerung = id;
     });
     return result;
   }
@@ -226,9 +227,8 @@ class TariffyCard extends HTMLElement {
           ${istGas&&this._ok(verbrauchKwh)?`<div><div class="dl">Verbrauch (kWh)</div><div class="dv">${this._fmt(verbrauchKwh,0)} kWh</div></div>`:''}
           ${istGas&&brennwert?`<div><div class="dl">Brennwert</div><div class="dv">${this._fmt(brennwert,3)} kWh/m³</div></div>`:''}
           ${istGas&&zustandszahl?`<div><div class="dl">Zustandszahl</div><div class="dv">${this._fmt(zustandszahl,4)}</div></div>`:''}
-          ${istWasser&&this._ok(arbeitspreis)?`<div><div class="dl">Frischwasser</div><div class="dv">${this._fmt(arbeitspreis,4)} ${apUnit}</div></div>`:''}
-          ${istWasser&&this._ok(apAbwasser)?`<div><div class="dl">Abwasser</div><div class="dv">${this._fmt(apAbwasser,4)} ${wasserUnit}</div></div>`:''}
-          ${istWasser&&this._ok(apGesamt)?`<div><div class="dl">Gesamt (Wasser)</div><div class="dv">${this._fmt(apGesamt,4)} ${wasserUnit}</div></div>`:''}
+          ${istWasser&&this._ok(apAbwasser)?`<div><div class="dl">Abwasserpreis</div><div class="dv">${this._fmt(apAbwasser,4)} ${wasserUnit}</div></div>`:''}
+          ${istWasser&&this._ok(apGesamt)?`<div><div class="dl">Gesamtpreis (Wasser)</div><div class="dv">${this._fmt(apGesamt,4)} ${wasserUnit}</div></div>`:''}
           ${istWasser&&this._ok(grundpreis)?`<div><div class="dl">Grundpreis</div><div class="dv">${this._fmt(grundpreis,2)} €/Mo</div></div>`:''}
           ${!istGas&&!istWasser&&this._ok(geschaetzte)?`<div><div class="dl">Gesch. Jahreskosten</div><div class="dv">${this._fmt(geschaetzte,0)} €</div></div>`:''}
           ${istEnergie&&this._ok(verbrauchBisher)?`<div><div class="dl">Verbrauch bisher</div><div class="dv">${this._fmt(verbrauchBisher,1)} ${verbrauchUnit}</div></div>`:''}
