@@ -48,7 +48,7 @@ class TariffyCard extends HTMLElement {
       else if (tk === 'arbeitspreis_abwasser'      || (!tk && (id.includes('arbeitspreis_abwasser') || id.includes('abwasserpreis')))) result.arbeitspreis_abwasser = id;
       else if (tk === 'arbeitspreis_gesamt_wasser' || (!tk && (id.includes('arbeitspreis_gesamt_wasser') || id.includes('gesamtwasserpreis')))) result.arbeitspreis_gesamt_wasser = id;
       else if (tk === 'grundpreis'                || (!tk && id.includes('grundpreis')))                    result.grundpreis = id;
-      else if (tk === 'monatliche_kosten'          || (!tk && id.includes('monatliche_kosten')))            result.monatliche_kosten = id;
+      else if (tk === 'abschlag'          || (!tk && id.includes('abschlag')))            result.abschlag = id;
       else if (tk === 'jahreskosten'               || (!tk && id.includes('jahreskosten') && !id.includes('geschatzt'))) result.jahreskosten = id;
       else if (tk === 'geschaetzte_jahreskosten'   || (!tk && id.includes('geschatzt')))                   result.geschaetzte_jahreskosten = id;
       else if (tk === 'verbrauch_kwh'              || (!tk && id.includes('verbrauch_kwh')))                result.verbrauch_kwh = id;
@@ -132,7 +132,7 @@ class TariffyCard extends HTMLElement {
     const color = this._sparteColor(sparte);
     const anbieter = this._val(ents.anbieter) || '—';
     const tarif = this._val(ents.tarif) || '';
-    const kosten = this._val(ents.monatliche_kosten);
+    const kosten = this._val(ents.abschlag);
     const rest = this._val(ents.restlaufzeit);
     const aktiv = this._kuendigungAktiv(ents);
     const erinnerung = this._fmtDate(this._val(ents.kuendigung_erinnerung));
@@ -161,7 +161,7 @@ class TariffyCard extends HTMLElement {
     const erinnerung = this._fmtDate(this._val(ents.kuendigung_erinnerung));
     const beginn = this._fmtDate(this._val(ents.beginn));
     const ende = this._fmtDate(this._val(ents.ende));
-    const kosten = this._val(ents.monatliche_kosten);
+    const kosten = this._val(ents.abschlag);
     const jahreskosten = this._val(ents.jahreskosten);
     const prognose = this._val(ents.prognose_real);
     const progNeg = prognose && parseFloat(prognose) < 0;
@@ -206,7 +206,9 @@ class TariffyCard extends HTMLElement {
               <div class="sub">${anbieter}${tarif?' · '+tarif:''}${oekostrom===true?' · <span class="green">Ökostrom</span>':''}</div>
             </div>
           </div>
-          ${aktiv?`<div class="chip warn">⚠ ${erinnerung!=='—'?erinnerung:ende}</div>`:`<div class="chip ok">Aktiv</div>`}
+          <div style="display:flex;gap:6px;align-items:center">
+            ${aktiv?`<div class="chip warn">⚠ ${erinnerung!=='—'?erinnerung:ende}</div>`:`<div class="chip ok">Aktiv</div>`}
+          </div>
         </div>
 
         <div class="metrics">
@@ -222,7 +224,6 @@ class TariffyCard extends HTMLElement {
           ${istEnergie&&!istWasser&&this._ok(grundpreis)?`<div><div class="dl">Grundpreis</div><div class="dv">${this._fmt(grundpreis,2)} €/Mo</div></div>`:''}
           ${istStrom&&this._ok(apNacht)?`<div><div class="dl">Arbeitspreis Nacht</div><div class="dv">${this._fmt(apNacht,4)} €/kWh</div></div>`:''}
           ${istStrom&&this._ok(apEffektiv)?`<div><div class="dl">Eff. Arbeitspreis</div><div class="dv">${this._fmt(apEffektiv,4)} €/kWh</div></div>`:''}
-          ${istStrom&&this._ok(einspeisung)?`<div><div class="dl">Einspeisevergütung</div><div class="dv">${this._fmt(einspeisung,4)} €/kWh</div></div>`:''}
           ${istGas&&verbrauchM3?`<div><div class="dl">Verbrauch (m³)</div><div class="dv">${this._fmt(verbrauchM3,0)} m³</div></div>`:''}
           ${istGas&&this._ok(verbrauchKwh)?`<div><div class="dl">Verbrauch (kWh)</div><div class="dv">${this._fmt(verbrauchKwh,0)} kWh</div></div>`:''}
           ${istGas&&brennwert?`<div><div class="dl">Brennwert</div><div class="dv">${this._fmt(brennwert,3)} kWh/m³</div></div>`:''}
@@ -230,6 +231,7 @@ class TariffyCard extends HTMLElement {
           ${istWasser&&this._ok(apAbwasser)?`<div><div class="dl">Abwasserpreis</div><div class="dv">${this._fmt(apAbwasser,4)} ${wasserUnit}</div></div>`:''}
           ${istWasser&&this._ok(apGesamt)?`<div><div class="dl">Gesamtpreis (Wasser)</div><div class="dv">${this._fmt(apGesamt,4)} ${wasserUnit}</div></div>`:''}
           ${istWasser&&this._ok(grundpreis)?`<div><div class="dl">Grundpreis</div><div class="dv">${this._fmt(grundpreis,2)} €/Mo</div></div>`:''}
+          ${istStrom&&this._ok(einspeisung)?`<div><div class="dl">Einspeisevergütung</div><div class="dv">${this._fmt(einspeisung,4)} €/kWh</div></div>`:''}
           ${!istGas&&!istWasser&&this._ok(geschaetzte)?`<div><div class="dl">Gesch. Jahreskosten</div><div class="dv">${this._fmt(geschaetzte,0)} €</div></div>`:''}
           ${istEnergie&&this._ok(verbrauchBisher)?`<div><div class="dl">Verbrauch bisher</div><div class="dv">${this._fmt(verbrauchBisher,1)} ${verbrauchUnit}</div></div>`:''}
           ${istEnergie&&this._ok(verbrauchHoch)?`<div><div class="dl">Hochgerechnet/Jahr</div><div class="dv">${this._fmt(verbrauchHoch,0)} ${verbrauchUnit}</div></div>`:''}
@@ -478,3 +480,4 @@ window.customCards.push({
   name: 'Tariffy Card',
   description: 'Zeigt Tariffy-Verträge kompakt oder detailliert an.',
 });
+console.log('[tariffy-card] v2 geladen');
