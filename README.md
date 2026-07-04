@@ -20,6 +20,7 @@ Lovelace Card for the [Tariffy Integration](https://github.com/weskona/tariffy).
 - **Water:** fresh water price, wastewater, combined price, base price, consumption since contract start
 - **Real consumption tracking:** consumption so far + projected annual consumption (requires meter sensor in Tariffy)
 - **Real billing forecast:** credit or surcharge based on actual usage
+- **Last period consumption + recommended payment:** displayed after tariff switch
 - **Cancellation warning** highlighted as badge
 - **Tariff switch** shown when stored
 - Automatic category detection via `device_id`
@@ -61,14 +62,16 @@ sparte: strom
 entities:
   anbieter: sensor.electricity_provider
   tarif: sensor.electricity_tariff
-  monatliche_kosten: sensor.electricity_monthly_cost
+  abschlag: sensor.electricity_monthly_payment
   jahreskosten: sensor.electricity_annual_cost
   geschaetzte_jahreskosten: sensor.electricity_estimated_annual_cost
+  empfohlener_abschlag: sensor.electricity_recommended_payment
   arbeitspreis: sensor.electricity_unit_price
   grundpreis: sensor.electricity_base_price
   einspeiseverguetung: sensor.electricity_feed_in_tariff
   verbrauch_bisher: sensor.electricity_consumption_so_far
   verbrauch_hochgerechnet: sensor.electricity_projected_annual
+  verbrauch_letzte_laufzeit: sensor.electricity_consumption_last_period
   prognose_real: sensor.electricity_billing_forecast
   restlaufzeit: sensor.electricity_remaining_term
   beginn: sensor.electricity_contract_start
@@ -91,7 +94,7 @@ entities:
 
 ### Modes
 
-**Compact** — one row: icon, name, provider, monthly cost, remaining days. Cancellation warning as badge.
+**Compact** — one row: icon, name, provider, monthly payment, remaining days. Cancellation warning as badge.
 
 **Detail** — full view with cost tiles (monthly, annual, billing forecast), price grid (category-specific), real consumption, contract dates, customer/meter number.
 
@@ -99,7 +102,7 @@ Click the card to toggle between modes.
 
 ### Requirements
 
-- [Tariffy Integration](https://github.com/weskona/tariffy) v1.9.4+
+- [Tariffy Integration](https://github.com/weskona/tariffy) v1.10.0+
 - Home Assistant 2026.6+
 
 ---
@@ -115,6 +118,7 @@ Click the card to toggle between modes.
 - **Wasser:** Frischwasserpreis, Abwasser, Gesamtpreis, Grundpreis, Verbrauch seit Vertragsbeginn
 - **Echte Verbrauchsmessung:** Verbrauch bisher + hochgerechneter Jahresverbrauch (erfordert Verbrauchssensor in Tariffy)
 - **Abrechnungsprognose (real):** Guthaben oder Nachzahlung auf Basis des echten Verbrauchs
+- **Verbrauch letzte Laufzeit + empfohlener Abschlag:** wird nach Tarifwechsel angezeigt
 - **Kündigungs-Warnung** als Badge hervorgehoben
 - **Tarifwechsel** wird angezeigt wenn hinterlegt
 - Automatische Sparten-Erkennung per `device_id`
@@ -156,22 +160,24 @@ sparte: strom
 entities:
   anbieter: sensor.strom_anbieter
   tarif: sensor.strom_tarif
-  monatliche_kosten: sensor.strom_monatliche_kosten
+  abschlag: sensor.strom_abschlag
   jahreskosten: sensor.strom_jahreskosten
-  geschaetzte_jahreskosten: sensor.strom_geschaetzte_jahreskosten
+  geschaetzte_jahreskosten: sensor.strom_jahreskosten_geschatzt
+  empfohlener_abschlag: sensor.strom_abschlag_empfohlen
   arbeitspreis: sensor.strom_arbeitspreis
   grundpreis: sensor.strom_grundpreis
-  einspeiseverguetung: sensor.strom_einspeiseverguetung
-  verbrauch_bisher: sensor.strom_verbrauch_bisher_vertrag
-  verbrauch_hochgerechnet: sensor.strom_hochgerechneter_jahresverbrauch
-  prognose_real: sensor.strom_abrechnungsprognose_real
+  einspeiseverguetung: sensor.strom_einspeisevergutung
+  verbrauch_bisher: sensor.strom_verbrauch_bisher
+  verbrauch_hochgerechnet: sensor.strom_jahresverbrauch_hochgerechnet
+  verbrauch_letzte_laufzeit: sensor.strom_verbrauch_letzte_laufzeit
+  prognose_real: sensor.strom_prognose_real
   restlaufzeit: sensor.strom_restlaufzeit
   beginn: sensor.strom_vertragsbeginn
   ende: sensor.strom_vertragsende
-  kuendigung_erinnerung: sensor.strom_kuendigungs_erinnerung
-  naechster_wechsel: sensor.strom_naechster_wechsel
+  kuendigung_erinnerung: sensor.strom_kundigungs_erinnerung
+  naechster_wechsel: sensor.strom_nachster_wechsel
   kundennummer: sensor.strom_kundennummer
-  zaehlernummer: sensor.strom_zaehlernummer
+  zaehlernummer: sensor.strom_zahlernummer
 ```
 
 ### Optionen
@@ -186,7 +192,7 @@ entities:
 
 ### Modi
 
-**Kompakt** — eine Zeile: Icon, Name, Anbieter, Monatskosten, Restlaufzeit. Kündigungswarnung als Badge.
+**Kompakt** — eine Zeile: Icon, Name, Anbieter, Abschlag, Restlaufzeit. Kündigungswarnung als Badge.
 
 **Detail** — vollständige Ansicht mit Kosten-Kacheln (monatlich, jährlich, Prognose), Preis-Grid (sparten-spezifisch), echtem Verbrauch, Vertragsdaten, Kundennummer und Zählernummer.
 
@@ -194,7 +200,7 @@ Per Klick auf die Card zwischen den Modi wechseln.
 
 ### Anforderungen
 
-- [Tariffy Integration](https://github.com/weskona/tariffy) v1.9.4+
+- [Tariffy Integration](https://github.com/weskona/tariffy) v1.10.0+
 - Home Assistant 2026.6+
 
 ---
