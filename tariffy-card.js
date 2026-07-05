@@ -50,10 +50,12 @@ class TariffyCard extends HTMLElement {
       else if (tk === 'grundpreis'                || (!tk && id.includes('grundpreis')))                    result.grundpreis = id;
       else if (tk === 'abschlag'          || (!tk && id.includes('abschlag')))            result.abschlag = id;
       else if (tk === 'jahreskosten'               || (!tk && id.includes('jahreskosten') && !id.includes('geschatzt'))) result.jahreskosten = id;
-      else if (tk === 'geschaetzte_jahreskosten'   || (!tk && id.includes('geschatzt')))                   result.geschaetzte_jahreskosten = id;
       else if (tk === 'verbrauch_kwh'              || (!tk && id.includes('verbrauch_kwh')))                result.verbrauch_kwh = id;
       else if (tk === 'verbrauch_hochgerechnet'    || (!tk && id.includes('hochgerechnet')))                result.verbrauch_hochgerechnet = id;
       else if (tk === 'verbrauch_bisher'           || (!tk && id.includes('verbrauch_bisher')))             result.verbrauch_bisher = id;
+      else if (tk === 'kosten_bisher'             || (!tk && id.includes('kosten_bisher')))                result.kosten_bisher = id;
+      else if (tk === 'verbrauch_letzte_laufzeit' || (!tk && id.includes('letzte_laufzeit')))              result.verbrauch_letzte_laufzeit = id;
+      else if (tk === 'empfohlener_abschlag'      || (!tk && id.includes('empfohlener_abschlag')))         result.empfohlener_abschlag = id;
       else if (tk === 'prognose_real'              || (!tk && id.includes('prognose_real')))                result.prognose_real = id;
       else if (tk === 'einspeiseverguetung'        || (!tk && id.includes('einspeiseverguetung')))          result.einspeiseverguetung = id;
       else if (tk === 'restlaufzeit'               || (!tk && id.includes('restlaufzeit')))                 result.restlaufzeit = id;
@@ -172,7 +174,10 @@ class TariffyCard extends HTMLElement {
     const kundennummer = this._val(ents.kundennummer);
     const zaehlernummer = this._val(ents.zaehlernummer);
     const wechsel = this._fmtDate(this._val(ents.naechster_wechsel));
-    const geschaetzte = this._val(ents.geschaetzte_jahreskosten);
+    const kostenBisher = this._val(ents.kosten_bisher);
+    const verbrauchLetzte = this._val(ents.verbrauch_letzte_laufzeit);
+    const verbrauchLetzteUnit = this._unit(ents.verbrauch_letzte_laufzeit);
+    const empfohlenerAbschlag = this._val(ents.empfohlener_abschlag);
     const istEnergie = ['strom','gas','wasser'].includes(sparte);
     const istGas = sparte === 'gas';
     const istWasser = sparte === 'wasser';
@@ -213,7 +218,8 @@ class TariffyCard extends HTMLElement {
 
         <div class="metrics">
           <div class="metric"><div class="ml">Abschlag</div><div class="mv">${this._ok(kosten)?this._fmt(kosten,0)+' €':'—'}</div><div class="ms">/Monat</div></div>
-          <div class="metric"><div class="ml">Jahreskosten</div><div class="mv">${this._ok(jahreskosten)?this._fmt(jahreskosten,0)+' €':'—'}</div><div class="ms">/Jahr</div></div>
+          <div class="metric"><div class="ml">Kosten (Laufzeit)</div><div class="mv">${this._ok(jahreskosten)?this._fmt(jahreskosten,0)+' €':'—'}</div><div class="ms"> </div></div>
+          ${istEnergie&&this._ok(kostenBisher)?`<div class="metric"><div class="ml">Kosten (Bisher)</div><div class="mv">${this._fmt(kostenBisher,0)} €</div><div class="ms"> </div></div>`:''}
           ${istEnergie&&this._ok(prognose)?`<div class="metric"><div class="ml">Prognose</div><div class="mv ${progNeg?'neg':'pos'}">${this._fmt(prognose,0)} €</div><div class="ms ${progNeg?'neg':'pos'}">${progNeg?'Nachzahlung':'Guthaben'}</div></div>`:''}
         </div>
 
@@ -232,7 +238,8 @@ class TariffyCard extends HTMLElement {
           ${istWasser&&this._ok(apGesamt)?`<div><div class="dl">Gesamtpreis (Wasser)</div><div class="dv">${this._fmt(apGesamt,4)} ${wasserUnit}</div></div>`:''}
           ${istWasser&&this._ok(grundpreis)?`<div><div class="dl">Grundpreis</div><div class="dv">${this._fmt(grundpreis,2)} €/Mo</div></div>`:''}
           ${istStrom&&this._ok(einspeisung)?`<div><div class="dl">Einspeisevergütung</div><div class="dv">${this._fmt(einspeisung,4)} €/kWh</div></div>`:''}
-          ${!istGas&&!istWasser&&this._ok(geschaetzte)?`<div><div class="dl">Gesch. Jahreskosten</div><div class="dv">${this._fmt(geschaetzte,0)} €</div></div>`:''}
+          ${istEnergie&&this._ok(verbrauchLetzte)?`<div><div class="dl">Verbrauch (Letzte Laufzeit)</div><div class="dv">${this._fmt(verbrauchLetzte,1)} ${verbrauchLetzteUnit}</div></div>`:''}
+          ${istEnergie&&this._ok(empfohlenerAbschlag)?`<div><div class="dl">Abschlag (Empfohlen)</div><div class="dv">${this._fmt(empfohlenerAbschlag,0)} €/Mo</div></div>`:''}
           ${istEnergie&&this._ok(verbrauchBisher)?`<div><div class="dl">Verbrauch bisher</div><div class="dv">${this._fmt(verbrauchBisher,1)} ${verbrauchUnit}</div></div>`:''}
           ${istEnergie&&this._ok(verbrauchHoch)?`<div><div class="dl">Hochgerechnet/Jahr</div><div class="dv">${this._fmt(verbrauchHoch,0)} ${verbrauchUnit}</div></div>`:''}
         </div>
@@ -480,4 +487,4 @@ window.customCards.push({
   name: 'Tariffy Card',
   description: 'Zeigt Tariffy-Verträge kompakt oder detailliert an.',
 });
-console.log('[tariffy-card] v2 geladen');
+console.log('[tariffy-card] v3 geladen');

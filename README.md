@@ -15,7 +15,7 @@ Lovelace Card for the [Tariffy Integration](https://github.com/weskona/tariffy).
 
 - **Two modes:** Compact (tile) and detail — toggle by clicking the card
 - **Category-specific layouts:** Electricity, Gas, Water, Internet, Mobile, Insurance, Other
-- **Electricity:** unit price, base price, night rate, tiered effective price, feed-in tariff, estimated annual cost, real billing forecast
+- **Electricity:** unit price, base price, night rate, tiered effective price, feed-in tariff, cost (contract period), cost (so far), real billing forecast
 - **Gas:** m³, kWh, calorific value, state number, consumption since contract start
 - **Water:** fresh water price, wastewater, combined price, base price, consumption since contract start
 - **Real consumption tracking:** consumption so far + projected annual consumption (requires meter sensor in Tariffy)
@@ -63,8 +63,8 @@ entities:
   anbieter: sensor.electricity_provider
   tarif: sensor.electricity_tariff
   abschlag: sensor.electricity_monthly_payment
-  jahreskosten: sensor.electricity_annual_cost
-  geschaetzte_jahreskosten: sensor.electricity_estimated_annual_cost
+  jahreskosten: sensor.electricity_contract_period_cost
+  kosten_bisher: sensor.electricity_cost_so_far
   empfohlener_abschlag: sensor.electricity_recommended_payment
   arbeitspreis: sensor.electricity_unit_price
   grundpreis: sensor.electricity_base_price
@@ -102,7 +102,7 @@ Click the card to toggle between modes.
 
 ### Requirements
 
-- [Tariffy Integration](https://github.com/weskona/tariffy) v1.10.0+
+- [Tariffy Integration](https://github.com/weskona/tariffy) v1.11.0+
 - Home Assistant 2026.6+
 
 ---
@@ -113,7 +113,7 @@ Click the card to toggle between modes.
 
 - **Zwei Modi:** Kompakt (Kachel) und Detail — per Klick umschaltbar
 - **Sparten-spezifische Layouts:** Strom, Gas, Wasser, Internet, Mobilfunk, Versicherung, Sonstiges
-- **Strom:** Arbeitspreis, Grundpreis, Nachttarif, effektiver Staffelpreis, Einspeisevergütung, geschätzte Jahreskosten, Abrechnungsprognose (real)
+- **Strom:** Arbeitspreis, Grundpreis, Nachttarif, effektiver Staffelpreis, Einspeisevergütung, Kosten (Vertragslaufzeit), Kosten (Bisher), Abrechnungsprognose (real)
 - **Gas:** m³, kWh, Brennwert, Zustandszahl, Verbrauch seit Vertragsbeginn
 - **Wasser:** Frischwasserpreis, Abwasser, Gesamtpreis, Grundpreis, Verbrauch seit Vertragsbeginn
 - **Echte Verbrauchsmessung:** Verbrauch bisher + hochgerechneter Jahresverbrauch (erfordert Verbrauchssensor in Tariffy)
@@ -161,8 +161,8 @@ entities:
   anbieter: sensor.strom_anbieter
   tarif: sensor.strom_tarif
   abschlag: sensor.strom_abschlag
-  jahreskosten: sensor.strom_jahreskosten
-  geschaetzte_jahreskosten: sensor.strom_jahreskosten_geschatzt
+  jahreskosten: sensor.strom_kosten_vertragslaufzeit
+  kosten_bisher: sensor.strom_kosten_bisher
   empfohlener_abschlag: sensor.strom_abschlag_empfohlen
   arbeitspreis: sensor.strom_arbeitspreis
   grundpreis: sensor.strom_grundpreis
@@ -200,7 +200,7 @@ Per Klick auf die Card zwischen den Modi wechseln.
 
 ### Anforderungen
 
-- [Tariffy Integration](https://github.com/weskona/tariffy) v1.10.0+
+- [Tariffy Integration](https://github.com/weskona/tariffy) v1.11.0+
 - Home Assistant 2026.6+
 
 ---
