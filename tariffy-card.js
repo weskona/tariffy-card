@@ -48,11 +48,13 @@ class TariffyCard extends HTMLElement {
       else if (tk === 'arbeitspreis_abwasser'      || (!tk && (id.includes('arbeitspreis_abwasser') || id.includes('abwasserpreis')))) result.arbeitspreis_abwasser = id;
       else if (tk === 'arbeitspreis_gesamt_wasser' || (!tk && (id.includes('arbeitspreis_gesamt_wasser') || id.includes('gesamtwasserpreis')))) result.arbeitspreis_gesamt_wasser = id;
       else if (tk === 'grundpreis'                || (!tk && id.includes('grundpreis')))                    result.grundpreis = id;
+      else if (tk === 'abschlag_anpassung_empfohlen' || (!tk && id.includes('abschlag_anpassung_empfohlen'))) result.abschlag_anpassung_empfohlen = id;
       else if (tk === 'abschlag'          || (!tk && id.includes('abschlag')))            result.abschlag = id;
       else if (tk === 'jahreskosten'               || (!tk && id.includes('jahreskosten') && !id.includes('geschatzt'))) result.jahreskosten = id;
       else if (tk === 'verbrauch_kwh'              || (!tk && id.includes('verbrauch_kwh')))                result.verbrauch_kwh = id;
       else if (tk === 'verbrauch_hochgerechnet'    || (!tk && id.includes('hochgerechnet')))                result.verbrauch_hochgerechnet = id;
       else if (tk === 'verbrauch_bisher'           || (!tk && id.includes('verbrauch_bisher')))             result.verbrauch_bisher = id;
+      else if (tk === 'guthaben_bisher'           || (!tk && id.includes('guthaben_bisher')))               result.guthaben_bisher = id;
       else if (tk === 'kosten_bisher'             || (!tk && id.includes('kosten_bisher')))                result.kosten_bisher = id;
       else if (tk === 'verbrauch_letzte_laufzeit' || (!tk && id.includes('letzte_laufzeit')))              result.verbrauch_letzte_laufzeit = id;
       else if (tk === 'empfohlener_abschlag'      || (!tk && id.includes('empfohlener_abschlag')))         result.empfohlener_abschlag = id;
@@ -139,6 +141,7 @@ class TariffyCard extends HTMLElement {
     const aktiv = this._kuendigungAktiv(ents);
     const erinnerung = this._fmtDate(this._val(ents.kuendigung_erinnerung));
     const ende = this._fmtDate(this._val(ents.ende));
+    const abschlagWarnung = this._attr(ents.prognose_real, 'abschlag_warnung_aktiv') === true;
     return `
       <div class="card compact">
         <div class="ci" style="background:${color}22;color:${color}">${icon}</div>
@@ -150,6 +153,7 @@ class TariffyCard extends HTMLElement {
           ${this._ok(kosten) ? `<div class="cost">${this._fmt(kosten,0)} €/Mo</div>` : ''}
           ${this._ok(rest) ? `<div class="sub">${parseInt(rest)} T verbleibend</div>` : ''}
         </div>
+        ${abschlagWarnung ? `<div class="chip warn" title="Abschlag zu niedrig">⚠ Abschlag</div>` : ''}
         ${aktiv ? `<div class="chip warn">⚠ ${erinnerung !== '—' ? erinnerung : ende}</div>` : `<div class="chip ok">Aktiv</div>`}
       </div>`;
   }
@@ -175,9 +179,13 @@ class TariffyCard extends HTMLElement {
     const zaehlernummer = this._val(ents.zaehlernummer);
     const wechsel = this._fmtDate(this._val(ents.naechster_wechsel));
     const kostenBisher = this._val(ents.kosten_bisher);
+    const guthabenBisher = this._val(ents.guthaben_bisher);
+    const guthabenBisherNeg = guthabenBisher && parseFloat(guthabenBisher) < 0;
     const verbrauchLetzte = this._val(ents.verbrauch_letzte_laufzeit);
     const verbrauchLetzteUnit = this._unit(ents.verbrauch_letzte_laufzeit);
     const empfohlenerAbschlag = this._val(ents.empfohlener_abschlag);
+    const abschlagAnpassung = this._val(ents.abschlag_anpassung_empfohlen);
+    const abschlagWarnung = this._attr(ents.prognose_real, 'abschlag_warnung_aktiv') === true;
     const istEnergie = ['strom','gas','wasser'].includes(sparte);
     const istGas = sparte === 'gas';
     const istWasser = sparte === 'wasser';
@@ -212,15 +220,17 @@ class TariffyCard extends HTMLElement {
             </div>
           </div>
           <div style="display:flex;gap:6px;align-items:center">
+            ${abschlagWarnung?`<div class="chip warn">⚠ Abschlag zu niedrig</div>`:''}
             ${aktiv?`<div class="chip warn">⚠ ${erinnerung!=='—'?erinnerung:ende}</div>`:`<div class="chip ok">Aktiv</div>`}
           </div>
         </div>
 
         <div class="metrics">
           <div class="metric"><div class="ml">Abschlag</div><div class="mv">${this._ok(kosten)?this._fmt(kosten,0)+' €':'—'}</div><div class="ms">/Monat</div></div>
-          <div class="metric"><div class="ml">Kosten (Laufzeit)</div><div class="mv">${this._ok(jahreskosten)?this._fmt(jahreskosten,0)+' €':'—'}</div><div class="ms"> </div></div>
+          <div class="metric"><div class="ml">Abschlag (Laufzeit)</div><div class="mv">${this._ok(jahreskosten)?this._fmt(jahreskosten,0)+' €':'—'}</div><div class="ms"> </div></div>
           ${istEnergie&&this._ok(kostenBisher)?`<div class="metric"><div class="ml">Kosten (Bisher)</div><div class="mv">${this._fmt(kostenBisher,0)} €</div><div class="ms"> </div></div>`:''}
-          ${istEnergie&&this._ok(prognose)?`<div class="metric"><div class="ml">Prognose</div><div class="mv ${progNeg?'neg':'pos'}">${this._fmt(prognose,0)} €</div><div class="ms ${progNeg?'neg':'pos'}">${progNeg?'Nachzahlung':'Guthaben'}</div></div>`:''}
+          ${istEnergie&&this._ok(guthabenBisher)?`<div class="metric"><div class="ml">Guthaben (Bisher)</div><div class="mv ${guthabenBisherNeg?'neg':'pos'}">${this._fmt(guthabenBisher,0)} €</div><div class="ms ${guthabenBisherNeg?'neg':'pos'}">${guthabenBisherNeg?'Nachzahlung':'Guthaben'}</div></div>`:''}
+          ${istEnergie&&this._ok(prognose)?`<div class="metric"><div class="ml">Guthaben (Ende)</div><div class="mv ${progNeg?'neg':'pos'}">${this._fmt(prognose,0)} €</div><div class="ms ${progNeg?'neg':'pos'}">${progNeg?'Nachzahlung':'Guthaben'}</div></div>`:''}
         </div>
 
         <div class="div"></div>
@@ -240,6 +250,7 @@ class TariffyCard extends HTMLElement {
           ${istStrom&&this._ok(einspeisung)?`<div><div class="dl">Einspeisevergütung</div><div class="dv">${this._fmt(einspeisung,4)} €/kWh</div></div>`:''}
           ${istEnergie&&this._ok(verbrauchLetzte)?`<div><div class="dl">Verbrauch (Letzte Laufzeit)</div><div class="dv">${this._fmt(verbrauchLetzte,1)} ${verbrauchLetzteUnit}</div></div>`:''}
           ${istEnergie&&this._ok(empfohlenerAbschlag)?`<div><div class="dl">Abschlag (Empfohlen)</div><div class="dv">${this._fmt(empfohlenerAbschlag,0)} €/Mo</div></div>`:''}
+          ${istEnergie&&this._ok(abschlagAnpassung)?`<div><div class="dl">Abschlag (Anpassung empfohlen)</div><div class="dv${abschlagWarnung?' neg':''}">${this._fmt(abschlagAnpassung,0)} €/Mo</div></div>`:''}
           ${istEnergie&&this._ok(verbrauchBisher)?`<div><div class="dl">Verbrauch bisher</div><div class="dv">${this._fmt(verbrauchBisher,1)} ${verbrauchUnit}</div></div>`:''}
           ${istEnergie&&this._ok(verbrauchHoch)?`<div><div class="dl">Hochgerechnet/Jahr</div><div class="dv">${this._fmt(verbrauchHoch,0)} ${verbrauchUnit}</div></div>`:''}
         </div>
@@ -487,4 +498,4 @@ window.customCards.push({
   name: 'Tariffy Card',
   description: 'Zeigt Tariffy-Verträge kompakt oder detailliert an.',
 });
-console.log('[tariffy-card] v3 geladen');
+console.log('[tariffy-card] v1.12.0 geladen');

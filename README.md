@@ -15,11 +15,13 @@ Lovelace Card for the [Tariffy Integration](https://github.com/weskona/tariffy).
 
 - **Two modes:** Compact (tile) and detail — toggle by clicking the card
 - **Category-specific layouts:** Electricity, Gas, Water, Internet, Mobile, Insurance, Other
-- **Electricity:** unit price, base price, night rate, tiered effective price, feed-in tariff, cost (contract period), cost (so far), real billing forecast
+- **Electricity:** unit price, base price, night rate, tiered effective price, feed-in tariff, instalment (contract period), cost (so far), credit/surcharge (so far), real billing forecast
 - **Gas:** m³, kWh, calorific value, state number, consumption since contract start
 - **Water:** fresh water price, wastewater, combined price, base price, consumption since contract start
 - **Real consumption tracking:** consumption so far + projected annual consumption (requires meter sensor in Tariffy)
+- **Credit/surcharge so far:** running balance based on actual usage, correctly accounting for mid-term instalment changes
 - **Real billing forecast:** credit or surcharge based on actual usage
+- **Instalment adjustment recommendation:** ongoing recommendation to adjust the current instalment, shown alongside a low-instalment warning badge
 - **Last period consumption + recommended payment:** displayed after tariff switch
 - **Cancellation warning** highlighted as badge
 - **Tariff switch** shown when stored
@@ -65,7 +67,9 @@ entities:
   abschlag: sensor.electricity_monthly_payment
   jahreskosten: sensor.electricity_contract_period_cost
   kosten_bisher: sensor.electricity_cost_so_far
+  guthaben_bisher: sensor.electricity_credit_so_far
   empfohlener_abschlag: sensor.electricity_recommended_payment
+  abschlag_anpassung_empfohlen: sensor.electricity_instalment_adjustment_recommended
   arbeitspreis: sensor.electricity_unit_price
   grundpreis: sensor.electricity_base_price
   einspeiseverguetung: sensor.electricity_feed_in_tariff
@@ -102,7 +106,7 @@ Click the card to toggle between modes.
 
 ### Requirements
 
-- [Tariffy Integration](https://github.com/weskona/tariffy) v1.11.0+
+- [Tariffy Integration](https://github.com/weskona/tariffy) v1.23.0+
 - Home Assistant 2026.6+
 
 ---
@@ -113,11 +117,13 @@ Click the card to toggle between modes.
 
 - **Zwei Modi:** Kompakt (Kachel) und Detail — per Klick umschaltbar
 - **Sparten-spezifische Layouts:** Strom, Gas, Wasser, Internet, Mobilfunk, Versicherung, Sonstiges
-- **Strom:** Arbeitspreis, Grundpreis, Nachttarif, effektiver Staffelpreis, Einspeisevergütung, Kosten (Vertragslaufzeit), Kosten (Bisher), Abrechnungsprognose (real)
+- **Strom:** Arbeitspreis, Grundpreis, Nachttarif, effektiver Staffelpreis, Einspeisevergütung, Abschlag (Vertragslaufzeit), Kosten (Bisher), Guthaben/Nachzahlung (Bisher), Abrechnungsprognose (real)
 - **Gas:** m³, kWh, Brennwert, Zustandszahl, Verbrauch seit Vertragsbeginn
 - **Wasser:** Frischwasserpreis, Abwasser, Gesamtpreis, Grundpreis, Verbrauch seit Vertragsbeginn
 - **Echte Verbrauchsmessung:** Verbrauch bisher + hochgerechneter Jahresverbrauch (erfordert Verbrauchssensor in Tariffy)
+- **Guthaben/Nachzahlung (Bisher):** laufender Saldo auf Basis des echten Verbrauchs, berücksichtigt korrekt unterjährige Abschlagsanpassungen
 - **Abrechnungsprognose (real):** Guthaben oder Nachzahlung auf Basis des echten Verbrauchs
+- **Abschlag-Anpassungsempfehlung:** laufende Empfehlung zur Anpassung des aktuellen Abschlags, inkl. Warn-Badge bei zu niedrigem Abschlag
 - **Verbrauch letzte Laufzeit + empfohlener Abschlag:** wird nach Tarifwechsel angezeigt
 - **Kündigungs-Warnung** als Badge hervorgehoben
 - **Tarifwechsel** wird angezeigt wenn hinterlegt
@@ -163,7 +169,9 @@ entities:
   abschlag: sensor.strom_abschlag
   jahreskosten: sensor.strom_kosten_vertragslaufzeit
   kosten_bisher: sensor.strom_kosten_bisher
+  guthaben_bisher: sensor.strom_guthaben_bisher
   empfohlener_abschlag: sensor.strom_abschlag_empfohlen
+  abschlag_anpassung_empfohlen: sensor.strom_abschlag_anpassung_empfohlen
   arbeitspreis: sensor.strom_arbeitspreis
   grundpreis: sensor.strom_grundpreis
   einspeiseverguetung: sensor.strom_einspeisevergutung
@@ -200,7 +208,7 @@ Per Klick auf die Card zwischen den Modi wechseln.
 
 ### Anforderungen
 
-- [Tariffy Integration](https://github.com/weskona/tariffy) v1.11.0+
+- [Tariffy Integration](https://github.com/weskona/tariffy) v1.23.0+
 - Home Assistant 2026.6+
 
 ---
