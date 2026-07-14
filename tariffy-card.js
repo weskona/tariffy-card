@@ -293,21 +293,22 @@ class TariffyCard extends HTMLElement {
     const name = this._getDeviceName();
     const html = this._mode === 'detail' ? this._renderDetail(ents, sparte, name) : this._renderCompact(ents, sparte, name);
     this.shadowRoot.innerHTML = `<style>
-      :host{display:block}*{box-sizing:border-box;margin:0;padding:0}
+      :host{display:block;container-type:inline-size;container-name:tariffy}*{box-sizing:border-box;margin:0;padding:0}
       .card{background:var(--ha-card-background,var(--card-background-color,#fff));border-radius:var(--ha-card-border-radius,12px);border:1px solid var(--divider-color,rgba(0,0,0,.12));font-family:var(--paper-font-body1_-_font-family,sans-serif);color:var(--primary-text-color);overflow:hidden}
-      .compact{display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer}
+      .compact{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;padding:12px 14px;cursor:pointer}
       .ci,.iw{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
       .iw{width:40px;height:40px}
-      .ci-info{flex:1;min-width:0}.ci-right{text-align:right;flex-shrink:0}
+      .ci-info{flex:1 1 120px;min-width:0}.ci-right{text-align:right;flex-shrink:0}
       .name{font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
       .sub{font-size:12px;color:var(--secondary-text-color)}.cost{font-size:14px;font-weight:500}
       .chip{font-size:11px;font-weight:500;padding:3px 8px;border-radius:6px;white-space:nowrap;flex-shrink:0}
       .warn{background:rgba(245,158,11,.15);color:#b45309}.ok{background:rgba(16,185,129,.15);color:#047857}
-      .detail{padding:14px 16px}.dh{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
-      .hl{display:flex;align-items:center;gap:10px;flex:1;min-width:0}.green{color:#047857}
-      .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(80px,1fr));gap:10px;margin-bottom:14px}
-      .metric{background:var(--secondary-background-color,rgba(0,0,0,.04));border-radius:8px;padding:10px 12px}
-      .ml{font-size:11px;color:var(--secondary-text-color);margin-bottom:2px}.mv{font-size:20px;font-weight:500}.ms{font-size:11px;color:var(--secondary-text-color)}
+      .detail{padding:14px 16px}.dh{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 10px;margin-bottom:14px}
+      .hl{display:flex;align-items:center;gap:10px;flex:1 1 160px;min-width:0}.green{color:#047857}
+      .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:10px;margin-bottom:14px}
+      .metric{background:var(--secondary-background-color,rgba(0,0,0,.04));border-radius:8px;padding:10px 12px;min-width:0}
+      .ml{font-size:11px;color:var(--secondary-text-color);margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+      .mv{font-size:20px;font-weight:500}.ms{font-size:11px;color:var(--secondary-text-color)}
       .neg{color:var(--error-color,#ef4444)}.pos{color:var(--success-color,#10b981)}
       .div{border:none;border-top:1px solid var(--divider-color,rgba(0,0,0,.08));margin:12px 0}
       .g2{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px;margin-bottom:4px}
@@ -316,6 +317,28 @@ class TariffyCard extends HTMLElement {
       .row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-top:1px solid var(--divider-color,rgba(0,0,0,.06))}
       .row:first-child{border-top:none}.rl{font-size:13px;color:var(--secondary-text-color)}.rv{font-size:13px;font-weight:500}
       .rv.mut{color:var(--secondary-text-color);font-weight:400}.rv.acc{color:var(--accent-color,#6366f1)}
+
+      /* Handy: schmale Karte (z.B. Sidebar, kleine Sections-Kachel) */
+      @container tariffy (max-width: 340px) {
+        .compact{padding:10px 12px;gap:6px 8px}
+        .ci,.iw{width:32px;height:32px;font-size:17px}
+        .name{font-size:13px}.sub{font-size:11px}.cost{font-size:13px}
+        .detail{padding:12px}
+        .metrics{grid-template-columns:repeat(2,1fr);gap:8px}
+        .mv{font-size:17px}
+        .g2{grid-template-columns:1fr;gap:8px}
+        .rl,.rv{font-size:12px}
+      }
+      /* Tablet: mittlere Kartenbreite */
+      @container tariffy (min-width: 341px) and (max-width: 560px) {
+        .metrics{grid-template-columns:repeat(3,1fr)}
+        .g2{grid-template-columns:1fr 1fr}
+      }
+      /* PC: breite Karte (z.B. volle Section-Spalte) */
+      @container tariffy (min-width: 561px) {
+        .metrics{grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px}
+        .g2{grid-template-columns:repeat(3,1fr);gap:12px 20px}
+      }
     </style>${html}`;
     this.shadowRoot.querySelector('.card').addEventListener('click', () => this._toggleMode());
   }
@@ -498,4 +521,4 @@ window.customCards.push({
   name: 'Tariffy Card',
   description: 'Zeigt Tariffy-Verträge kompakt oder detailliert an.',
 });
-console.log('[tariffy-card] v1.12.0 geladen');
+console.log('[tariffy-card] v1.13.0 geladen');

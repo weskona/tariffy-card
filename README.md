@@ -14,6 +14,7 @@ Lovelace Card for the [Tariffy Integration](https://github.com/weskona/tariffy).
 ### Features
 
 - **Two modes:** Compact (tile) and detail — toggle by clicking the card
+- **Responsive layout:** grid columns and spacing adapt to the actual rendered card width (container queries), so it looks right on phone, tablet and desktop dashboards alike
 - **Category-specific layouts:** Electricity, Gas, Water, Internet, Mobile, Insurance, Other
 - **Electricity:** unit price, base price, night rate, tiered effective price, feed-in tariff, instalment (contract period), cost (so far), credit/surcharge (so far), real billing forecast
 - **Gas:** m³, kWh, calorific value, state number, consumption since contract start
@@ -116,6 +117,7 @@ Click the card to toggle between modes.
 ### Features
 
 - **Zwei Modi:** Kompakt (Kachel) und Detail — per Klick umschaltbar
+- **Responsives Layout:** Grid-Spalten und Abstände passen sich an die tatsächliche Kartenbreite an (Container Queries) — sieht auf Handy, Tablet und Desktop-Dashboards gleichermaßen stimmig aus
 - **Sparten-spezifische Layouts:** Strom, Gas, Wasser, Internet, Mobilfunk, Versicherung, Sonstiges
 - **Strom:** Arbeitspreis, Grundpreis, Nachttarif, effektiver Staffelpreis, Einspeisevergütung, Abschlag (Vertragslaufzeit), Kosten (Bisher), Guthaben/Nachzahlung (Bisher), Abrechnungsprognose (real)
 - **Gas:** m³, kWh, Brennwert, Zustandszahl, Verbrauch seit Vertragsbeginn
